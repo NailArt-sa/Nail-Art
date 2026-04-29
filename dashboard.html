@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — Nail Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#F7F2EC;--cream2:#EDE5D8;--taupe:#D4C4B5;
+  --mauve:#7D4E6B;--mauve-soft:#EDE0E8;--mauve-pale:#C9A8B8;
+  --ink:#2E1E28;--muted:#9A8590;--white:#FDFAF7;
+  --border:rgba(125,78,107,0.15);
+  --green:#4CAF50;--orange:#FF9800;--red:#F44336;--blue:#2196F3;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+
+/* LOGIN SCREEN */
+.login-screen{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px}
+.login-box{background:var(--cream);border-radius:28px;padding:48px 40px;width:100%;max-width:380px;text-align:center}
+.login-logo{height:56px;margin-bottom:28px;filter:brightness(0) saturate(100%) invert(28%) sepia(20%) saturate(800%) hue-rotate(280deg) brightness(70%)}
+.login-title{font-size:22px;font-weight:900;color:var(--ink);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:28px}
+.login-input{width:100%;padding:13px 18px;border:1.5px solid var(--border);border-radius:12px;font-family:'Tajawal',sans-serif;font-size:15px;color:var(--ink);background:var(--white);outline:none;text-align:center;letter-spacing:3px;transition:border .2s;margin-bottom:14px}
+.login-input:focus{border-color:var(--mauve)}
+.login-btn{width:100%;padding:14px;background:var(--mauve);color:var(--white);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;border:none;border-radius:50px;cursor:pointer;transition:all .3s;box-shadow:0 8px 24px rgba(125,78,107,0.25)}
+.login-btn:hover{background:var(--ink)}
+.login-error{font-size:13px;color:#C62828;margin-top:10px;display:none}
+.login-error.show{display:block}
+.dashboard-content{display:none}
+.dashboard-content.unlocked{display:block}
+
+/* HEADER */
+.header{background:var(--ink);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:62px;position:sticky;top:0;z-index:100}
+.header-logo{display:flex;align-items:center;gap:12px}
+.header-logo img{height:32px;filter:brightness(0) invert(1) opacity(.8)}
+.header-title{font-size:16px;font-weight:700;color:rgba(247,242,236,0.8)}
+.header-actions{display:flex;gap:10px}
+.header-btn{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;padding:7px 16px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;transition:all .2s}
+.header-btn-outline{background:transparent;color:rgba(247,242,236,0.6);border:1px solid rgba(247,242,236,0.2)}
+.header-btn-outline:hover{color:var(--mauve-pale);border-color:var(--mauve-pale)}
+
+/* STATS */
+.stats-bar{padding:24px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1200px;margin:0 auto}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px 18px}
+.stat-val{font-size:32px;font-weight:900;color:var(--mauve);line-height:1;margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--muted);font-weight:500}
+
+/* FILTERS */
+.filters{padding:0 32px 20px;max-width:1200px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.filter-btn{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);cursor:pointer;background:var(--white);color:var(--muted);transition:all .2s}
+.filter-btn.active{background:var(--mauve);color:white;border-color:var(--mauve)}
+.search-input{flex:1;max-width:280px;padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;font-family:'Tajawal',sans-serif;font-size:13px;color:var(--ink);background:var(--white);outline:none}
+.search-input:focus{border-color:var(--mauve)}
+.export-btn{margin-right:auto;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;padding:8px 18px;border-radius:20px;background:var(--cream2);border:1px solid var(--border);cursor:pointer;color:var(--ink);transition:all .2s}
+.export-btn:hover{background:var(--mauve);color:white;border-color:var(--mauve)}
+
+/* ORDERS TABLE */
+.orders-wrap{padding:0 32px 40px;max-width:1200px;margin:0 auto}
+.orders-count{font-size:13px;color:var(--muted);margin-bottom:14px;font-weight:500}
+
+.order-card{background:var(--white);border:1px solid var(--border);border-radius:16px;margin-bottom:12px;overflow:hidden;transition:box-shadow .2s}
+.order-card:hover{box-shadow:0 4px 20px rgba(125,78,107,0.1)}
+
+.order-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px}
+.order-head-right{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.order-ref-badge{font-size:11px;font-weight:800;color:var(--mauve);background:var(--mauve-soft);padding:4px 10px;border-radius:10px;flex-shrink:0}
+.order-customer{flex:1;min-width:0}
+.order-name{font-size:14px;font-weight:700;color:var(--ink)}
+.order-phone{font-size:12px;color:var(--muted)}
+.order-head-left{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.order-date{font-size:11px;color:var(--taupe)}
+.order-total{font-size:16px;font-weight:800;color:var(--mauve)}
+.status-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;border:none;font-family:'Tajawal',sans-serif}
+.status-جديد{background:#E3F2FD;color:#1565C0}
+.status-قيد-التجهيز{background:#FFF8E1;color:#E65100}
+.status-تم-الشحن{background:#E8F5E9;color:#2E7D32}
+.status-مكتمل{background:#F3E5F5;color:#6A1B9A}
+.status-ملغي{background:#FFEBEE;color:#C62828}
+.expand-icon{font-size:12px;color:var(--taupe);transition:transform .2s}
+.expanded .expand-icon{transform:rotate(180deg)}
+
+.order-body{display:none;padding:0 20px 20px;border-top:1px solid rgba(212,196,181,0.4)}
+.order-body.open{display:block}
+
+.order-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px}
+.detail-section{}
+.detail-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+.detail-item{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(212,196,181,0.3)}
+.detail-item:last-child{border-bottom:none}
+.detail-item span:first-child{color:var(--muted)}
+.detail-item span:last-child{color:var(--ink);font-weight:600;text-align:left;max-width:60%}
+
+.colors-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.color-item{background:var(--cream);border-radius:10px;padding:8px 12px}
+.color-prod{font-size:11px;font-weight:700;color:var(--mauve);margin-bottom:2px}
+.color-val{font-size:12px;color:var(--ink)}
+
+.order-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.action-btn{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:20px;border:none;cursor:pointer;transition:all .2s}
+.action-wa{background:#25D366;color:white}
+.action-wa:hover{background:#1fad54}
+.action-delete{background:var(--cream2);color:var(--muted)}
+.action-delete:hover{background:#FFEBEE;color:#C62828}
+
+/* empty state */
+.empty-state{text-align:center;padding:80px 24px;color:var(--muted)}
+.empty-icon{font-size:52px;margin-bottom:16px;opacity:.4}
+.empty-title{font-size:18px;font-weight:700;color:var(--taupe);margin-bottom:8px}
+.empty-sub{font-size:14px;font-weight:300}
+
+@media(max-width:640px){
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .order-detail-grid{grid-template-columns:1fr}
+  .colors-grid{grid-template-columns:1fr}
+  .header{padding:0 16px}
+  .stats-bar,.filters,.orders-wrap{padding-right:16px;padding-left:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <img src="https://cdn.salla.sa/rAQXXB/a0SocuSL4ZMtysa93WH2VamIK02T60emBPsXviuH.png" alt="Nail Art" class="login-logo">
+    <div class="login-title">لوحة التحكم</div>
+    <div class="login-sub">أدخل كلمة المرور للدخول</div>
+    <input class="login-input" id="passInput" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPass()">
+    <button class="login-btn" onclick="checkPass()">دخول</button>
+    <div class="login-error" id="passError">⚠️ كلمة المرور غير صحيحة</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard-content" id="dashContent">
+<div class="header">
+  <div class="header-logo">
+    <img src="https://cdn.salla.sa/rAQXXB/a0SocuSL4ZMtysa93WH2VamIK02T60emBPsXviuH.png" alt="Nail Art">
+    <span class="header-title">لوحة التحكم — الطلبات</span>
+  </div>
+  <div class="header-actions">
+    <a href="index.html" class="header-btn header-btn-outline" target="_blank">↗ صفحة الطلب</a>
+    <button class="header-btn header-btn-outline" onclick="clearAll()">حذف الكل</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="stats"></div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-btn active" onclick="filterOrders('all',this)">الكل</button>
+  <button class="filter-btn" onclick="filterOrders('جديد',this)">🔵 جديد</button>
+  <button class="filter-btn" onclick="filterOrders('قيد التجهيز',this)">🟡 قيد التجهيز</button>
+  <button class="filter-btn" onclick="filterOrders('تم الشحن',this)">🟢 تم الشحن</button>
+  <button class="filter-btn" onclick="filterOrders('مكتمل',this)">✅ مكتمل</button>
+  <input class="search-input" id="search" placeholder="🔍 بحث بالاسم أو رقم الطلب..." oninput="renderOrders()">
+  <button class="export-btn" onclick="exportCSV()">⬇ تصدير CSV</button>
+</div>
+
+<!-- ORDERS -->
+<div class="orders-wrap">
+  <div class="orders-count" id="orders-count"></div>
+  <div id="orders-list"></div>
+</div>
+
+<script>
+const PRODUCT_NAMES = {
+  probond:   'برو بوند',
+  basecoat:  'بيس كوت النود',
+  builder20: 'جل البناء 20g',
+  blooming:  'سائل مزهر',
+  platinum:  'جل البلاتين',
+  crystal:   'كريستال لامع',
+  flashing:  'جل وامض',
+  topcoat:   'توب كوت الماسي',
+  pandora:   'باندورا جل',
+  clay:      'جل النحت 3D',
+  metallic:  'جل ذهبي/فضي',
+};
+
+let currentFilter = 'all';
+
+function getOrders(){ return JSON.parse(localStorage.getItem('nailart_orders')||'[]'); }
+function saveOrders(o){ localStorage.setItem('nailart_orders', JSON.stringify(o)); }
+
+function renderStats(){
+  const orders = getOrders();
+  const total = orders.reduce((s,o)=>s+o.total,0);
+  const byStatus = s => orders.filter(o=>o.status===s).length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="stat-val">${orders.length}</div><div class="stat-label">إجمالي الطلبات</div></div>
+    <div class="stat-card"><div class="stat-val">${byStatus('جديد')}</div><div class="stat-label">🔵 طلبات جديدة</div></div>
+    <div class="stat-card"><div class="stat-val">${byStatus('تم الشحن')}</div><div class="stat-label">🟢 تم الشحن</div></div>
+    <div class="stat-card"><div class="stat-val">${total.toLocaleString('ar')} ر</div><div class="stat-label">إجمالي الإيرادات</div></div>
+  `;
+}
+
+function renderOrders(){
+  const orders = getOrders();
+  const search = document.getElementById('search').value.trim().toLowerCase();
+  let filtered = orders.filter(o => {
+    const matchFilter = currentFilter==='all' || o.status===currentFilter;
+    const matchSearch = !search || o.name.toLowerCase().includes(search) || o.ref.toLowerCase().includes(search) || o.phone.includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  document.getElementById('orders-count').textContent = `${filtered.length} طلب`;
+
+  if(filtered.length===0){
+    document.getElementById('orders-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">💅</div>
+        <div class="empty-title">لا توجد طلبات بعد</div>
+        <div class="empty-sub">الطلبات الجديدة ستظهر هنا تلقائياً</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('orders-list').innerHTML = filtered.map(o => `
+    <div class="order-card" id="card-${o.ref}">
+      <div class="order-head" onclick="toggleCard('${o.ref}')">
+        <div class="order-head-right">
+          <div class="order-ref-badge">${o.ref}</div>
+          <div class="order-customer">
+            <div class="order-name">${o.name}</div>
+            <div class="order-phone">${o.phone}</div>
+          </div>
+        </div>
+        <div class="order-head-left">
+          <span class="order-date">${o.date}</span>
+          <span class="order-total">${o.total} ر</span>
+          <select class="status-badge status-${o.status.replace(' ','-')}" onchange="updateStatus('${o.ref}',this.value)" onclick="e=>e.stopPropagation()">
+            ${['جديد','قيد التجهيز','تم الشحن','مكتمل','ملغي'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+          <span class="expand-icon">▼</span>
+        </div>
+      </div>
+      <div class="order-body" id="body-${o.ref}">
+        <div class="order-detail-grid">
+          <div class="detail-section">
+            <div class="detail-title">معلومات العميل</div>
+            <div class="detail-item"><span>الاسم</span><span>${o.name}</span></div>
+            <div class="detail-item"><span>الجوال</span><span>${o.phone}</span></div>
+            <div class="detail-item"><span>طريقة الاستلام</span><span>${o.deliveryType==='delivery'?'توصيل للمنزل':'شحن'}</span></div>
+            <div class="detail-item"><span>العنوان</span><span>${o.address||'—'}</span></div>
+            ${o.notes?`<div class="detail-item"><span>ملاحظات</span><span>${o.notes}</span></div>`:''}
+          </div>
+          <div class="detail-section">
+            <div class="detail-title">الألوان المختارة</div>
+            <div class="colors-grid">
+              ${Object.entries(o.selections).map(([k,v])=>`
+                <div class="color-item">
+                  <div class="color-prod">${PRODUCT_NAMES[k]||k}</div>
+                  <div class="color-val">${v}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="order-actions">
+          <a href="https://wa.me/${o.phone.replace(/^0/,'966')}?text=السلام عليكم ${o.name}، شكراً لطلبك رقم ${o.ref} من Nail Art 💅" class="action-btn action-wa" target="_blank">💬 تواصل عبر واتساب</a>
+          <button class="action-btn action-delete" onclick="deleteOrder('${o.ref}')">🗑 حذف الطلب</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleCard(ref){
+  const body = document.getElementById('body-'+ref);
+  const card = document.getElementById('card-'+ref);
+  body.classList.toggle('open');
+  card.classList.toggle('expanded');
+}
+
+function updateStatus(ref, status){
+  const orders = getOrders();
+  const o = orders.find(x=>x.ref===ref);
+  if(o){ o.status=status; saveOrders(orders); renderStats(); renderOrders(); }
+}
+
+function deleteOrder(ref){
+  if(!confirm('هل تريد حذف هذا الطلب؟')) return;
+  const orders = getOrders().filter(o=>o.ref!==ref);
+  saveOrders(orders);
+  renderStats(); renderOrders();
+}
+
+function clearAll(){
+  if(!confirm('هل تريد حذف جميع الطلبات؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
+  localStorage.removeItem('nailart_orders');
+  renderStats(); renderOrders();
+}
+
+function filterOrders(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function exportCSV(){
+  const orders = getOrders();
+  if(!orders.length){ alert('لا توجد طلبات للتصدير'); return; }
+  const headers = ['رقم الطلب','التاريخ','الاسم','الجوال','طريقة الاستلام','العنوان','ملاحظات','الإجمالي','الحالة','الألوان المختارة'];
+  const rows = orders.map(o => [
+    o.ref, o.date, o.name, o.phone,
+    o.deliveryType==='delivery'?'توصيل':'شحن',
+    o.address||'', o.notes||'',
+    o.total, o.status,
+    Object.entries(o.selections).map(([k,v])=>`${PRODUCT_NAMES[k]||k}: ${v}`).join(' | ')
+  ]);
+  const csv = [headers, ...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `طلبات_nail_art_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// auto refresh every 10s
+setInterval(()=>{ if(document.getElementById('dashContent').classList.contains('unlocked')){ renderStats(); renderOrders(); } }, 10000);
+
+// PASSWORD
+const PASS = 'Na147852';
+function checkPass(){
+  const val = document.getElementById('passInput').value;
+  const err = document.getElementById('passError');
+  if(val === PASS){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('dashContent').classList.add('unlocked');
+    sessionStorage.setItem('na_auth','1');
+    renderStats(); renderOrders();
+  } else {
+    err.classList.add('show');
+    document.getElementById('passInput').value='';
+    document.getElementById('passInput').focus();
+    setTimeout(()=>err.classList.remove('show'),2500);
+  }
+}
+
+// check session
+if(sessionStorage.getItem('na_auth')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dashContent').classList.add('unlocked');
+  renderStats(); renderOrders();
+}
+</script>
+</div>
+</body>
+</html>
